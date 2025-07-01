@@ -20,12 +20,22 @@ from django.http import Http404
 # Define reusable security scheme for Bearer token
 bearer_token_scheme = [{"Bearer": []}]
 
+# Define reusable manual parameter for Authorization header
+auth_header_param = openapi.Parameter(
+    'Authorization',
+    openapi.IN_HEADER,
+    description="Bearer <access_token>",
+    type=openapi.TYPE_STRING,
+    required=True
+)
+
 class TaskModelView (APIView):
     @swagger_auto_schema(
         operation_description="Get all tasks for the current authenticated user.",
         responses={200: "List of tasks"},
         security=bearer_token_scheme,
-        request_body=None
+        request_body=None,
+        manual_parameters=[auth_header_param]
     )
     # Gets all tasks associated with a user
     def get(self,request):
@@ -58,7 +68,8 @@ class TaskModelView (APIView):
                 "status": "Todo",
                 "board": 3
             }
-        )
+        ),
+        manual_parameters=[auth_header_param]
     )
     # Creates tasks associated with a board. Board id is passed in request body
     def post (self,request):
@@ -98,7 +109,8 @@ class TaskModelView (APIView):
                 "status": "Todo",
                 "board": 3
             }
-        )
+        ),
+        manual_parameters=[auth_header_param]
     )
     # Edits specific task. Id is sent in request body. 
     def put(self,request):
@@ -135,7 +147,8 @@ class TaskModelView (APIView):
             example={
                 "id": 3
             }
-        )
+        ),
+        manual_parameters=[auth_header_param]
     )
     def delete(self,request):
         """
@@ -163,7 +176,8 @@ class BoardView(APIView):
         operation_description="Retrieve all boards belonging to the authenticated user.",
         responses={200: "List of boards"},
         security=bearer_token_scheme,
-        request_body=None
+        request_body=None,
+        manual_parameters=[auth_header_param]
     )
     # Returns All Boards associated with a User
     def get(self,request):
@@ -185,7 +199,8 @@ class BoardView(APIView):
                 "title": "Board3",
                 "description": "Need to clean room2"
             }
-        )
+        ),
+        manual_parameters=[auth_header_param]
     )
     # Creates a Board. User is passed through Request
     def post(self,request):
@@ -216,7 +231,8 @@ class BoardView(APIView):
             example={
                 "id": 3
             }
-        )
+        ),
+        manual_parameters=[auth_header_param]
     )
     # Deletes a specific board. Id is passed in request body
     def delete(self,request):
@@ -245,7 +261,8 @@ class SpecificBoardView(APIView):
         operation_description="Retrieve all tasks linked to a specific board.",
         responses={200: "List of tasks"},
         security=bearer_token_scheme,
-        request_body=None
+        request_body=None,
+        manual_parameters=[auth_header_param]
     )
     # Returns Tasks Associated with specific boards. 
     def get(self,request,id):
