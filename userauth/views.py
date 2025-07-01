@@ -6,6 +6,8 @@ from rest_framework import status
 from rest_framework import permissions
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import AccessToken
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 # Create your views here.
@@ -25,6 +27,20 @@ class RegView(APIView):
 
     permission_classes = [permissions.AllowAny]
 
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['username', 'password'],
+            properties={
+                'username': openapi.Schema(type=openapi.TYPE_STRING, description='Username'),
+                'password': openapi.Schema(type=openapi.TYPE_STRING, description='Password'),
+            },
+            example={
+                "username": "username",
+                "password": "password"
+            }
+        )
+    )
     def post(self,request):
         serializer = UserSerializer(data = request.data)
         if serializer.is_valid():
@@ -48,6 +64,20 @@ class LoginView(APIView):
     """
     permission_classes = [permissions.AllowAny]
 
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['username', 'password'],
+            properties={
+                'username': openapi.Schema(type=openapi.TYPE_STRING, description='Username'),
+                'password': openapi.Schema(type=openapi.TYPE_STRING, description='Password'),
+            },
+            example={
+                "username": "username",
+                "password": "password"
+            }
+        )
+    )
     def post(self,request):
         try:
             username = request.data.get('username') 
@@ -66,7 +96,7 @@ class LoginView(APIView):
             return Response({"error":ve},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response("Something went wrong",status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
 
 
 
